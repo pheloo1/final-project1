@@ -1,140 +1,189 @@
-# A vulnerable Express.js + Node.js API and Frontend
-### 
+🔐 Secure Node.js Express Application
 
-# Warning
-This application is not intended for production. It was heavily influenced by real life code.
+Full-Spectrum Web App Hardening Project
 
-USE WITH CAUTION
+This project is a hardened version of a deliberately vulnerable Node.js + Express web application.
+It demonstrates a complete secure software development workflow including DAST, SAST (Semgrep), custom security rules, vulnerability remediation, and re-testing.
 
-## Quick Start with docker
+Base vulnerable app:
+https://github.com/SirAppSec/vuln-node.js-express.js-app
 
-1. Install Docker
-2. Run docker `pull sirappsec/nodejs-vulnerable-app`
-Run `docker run --rm -p 5000:5000 sirappsec/nodejs-vulnerable-app`
-3. Browse to http://localhost:3000 (on macOS and Windows browse to http://192.168.99.100:3000 if you are using docker-machine instead of the native docker installation)
+📌 Project Objectives
 
-## Quick Start with npm
-```bash
+Identify real-world web vulnerabilities using Dynamic Application Security Testing (DAST)
+
+Map findings to the OWASP Top 10
+
+Trace vulnerabilities to source code using Static Application Security Testing (SAST) with Semgrep
+
+Write custom Semgrep rules for exploited patterns
+
+Fix vulnerabilities using secure coding practices
+
+Re-test to prove vulnerabilities are resolved
+
+🧠 Technologies Used
+
+Backend: Node.js, Express.js
+
+Database: SQLite + Sequelize
+
+Security Testing:
+
+OWASP ZAP (DAST)
+
+Postman (manual exploitation)
+
+Semgrep (SAST + custom rules)
+
+Security Libraries:
+
+Helmet
+
+dotenv
+
+JSON Web Tokens (JWT)
+
+Optional Bonus: Splunk (PCAP traffic analysis)
+
+📂 Project Structure
+.
+├── src/
+│   ├── controllers/
+│   ├── routes/
+│   ├── middleware/
+│   └── utils/
+├── semgrep-rules/
+│   ├── insecure-sql-concat.yaml
+│   ├── insecure-jwt.yaml
+│   └── xss-unsanitized-output.yaml
+├── .env.example
+├── package.json
+└── README.md
+
+⚙️ Installation & Setup
+1️⃣ Clone the Repository
 git clone https://github.com/SirAppSec/vuln-node.js-express.js-app.git
 cd vuln-node.js-express.js-app
+
+2️⃣ Install Dependencies
 npm install
-npm install nodemon
+
+3️⃣ Environment Variables
+
+Create a .env file based on .env.example:
+
+JWT_SECRET=your_secret_here
+PORT=3000
+
+4️⃣ Run the Application
 npm run dev
 
-```
-# Purpose
-1. Test your skills, try to pentest and find the vulnerabilities
-2. Use to Asses DAST/SAST tools for Node.js/Express.js applications
-3. Learn how not to write code
 
-# Advantages over NodeGoat
-While NodeGoat cover mostly OWASP Top 10(inc SSRF and ReDos). This project have more vulnerabilities, multiple exploit chains and other weaknesses like low hanging fruits that are commonly found in production and enterprise level applications.
+The app will be available at:
 
-# Vulnerabilities/Weaknesses
-* Sql injection
-* Business Logic
-* XXE - XML External Entity
-* RCE - Remote Code Execution
-* Session Fixation
-* Improper Password Strength Controls
-* Hard Coded Secrets
-* Insufficient Randomness
-* Path Traversal
-* Privileged Interface Exposure
-* Leftover Debug Code
-* Authentication Credentials In URL
-* Insecure OTP/2FA/MFA
-* Vertical Privilege escalation
-* Horizontal Privilege escalation
-* Insecure Object Deserialization
-* CSRF - Cross Site Request Forgery
-* SSRF - Server Side Request Forgery)
-* Click Jacking / Lack of Security Headers
-* Insecure Redirect
-* Vulnerable and Outdated Components (Probably, lol)
-* Forced Browsing
-* Password Hash With Insufficient Computational Effort
-* Excessive data exposure
-* PII Leak - Personal Identifiable Information Exposure
-* BOLA - Broken Object Level Authorization
-* Broken user Authentication
-* Mass Assignment
-* User Enumeration
-* Improper Asset management 
-* Broken Function Level
-* IDOR - Insecure Direct Object References
-* DOS - Denial of Service
-* ReDoS - Regular Expression Denial Of Service
-* Insufficient Logging & Monitoring 
-* Insecure JWT Implementation
-* Uverified JWT manipulation
-* JWT Secret Key Brute Force
-* Template injection (SSTI)
-* Reflected+ Stored XSS - Cross Site Scripting
+http://localhost:3000
 
-## Todo
-* Insecure TLS Validation 
-* Arbitrary file writes
-* Type Confusion
-* Prototype pollution
-* Log injection
-* Host header poisoning
-* Encryption vulnerabilities
-* Trust boundary violations
-* Web Socket Security
-* NoSQL Injection
-* JSON Hijacking
+🧪 Security Testing Workflow
+🔍 Phase A – Dynamic Testing (DAST)
 
-# How to Start
-`docker-compose up`
-or nativaly
-`npm run dev`
+Automated scan using OWASP ZAP
 
-# Docs
-The swagger docs clearly state the type of vulnerability/exploitation method
-As expected, only some methods require authentication/authorization, mostly for the sake of brevity, although the most common (IMO) auth vulnerabilities are present in the application.
-<img width="832" alt="image" src="https://user-images.githubusercontent.com/89794666/182978736-72471ed2-eaf6-41e2-8af4-9122ea21db4e.png">
-<img width="1024" alt="image" src="https://user-images.githubusercontent.com/89794666/182978784-677e3f7c-ba57-4683-b7cd-523f68a7ec28.png">
+Manual exploitation using Postman
+
+Discovered 8+ distinct vulnerabilities across 4+ OWASP Top 10 categories
+
+Examples:
+
+SQL Injection
+
+XSS
+
+Broken Access Control (IDOR)
+
+Insecure JWT handling
+
+🔎 Phase B – Static Analysis (SAST with Semgrep)
+Run Built-in Rules
+semgrep --config "p/javascript" --config "p/nodejs"
+
+Run Custom Rules
+semgrep --config semgrep-rules/
 
 
-Access the api from http://localhost:5000/api-docs
+Custom rules were written to detect:
 
-# Easter Eggs
-Try to find deleted passwords and files in the repository.
+SQL queries built via string concatenation
 
-You can also try to look for logic that breaks the application.
+Unsanitized user input rendered to output (XSS)
 
+Insecure JWT verification patterns
 
-# License
-This repository is free to use as is without any limitations
+🛠️ Phase C – Fixes & Hardening
 
-the lorem impsum theme is free from https://themewagon.com/themes/free-responsive-bootstrap-5-html5-admin-template-sneat/
+Implemented fixes include:
 
-# Refs
-https://owasp.org/www-project-api-security/
-https://www.shiftleft.io/blog/node.js-vulnerability-cheatsheet/
-https://snyk.io/blog/remediate-javascript-type-confusion-bypassed-input-validation/
-https://github.com/snoopysecurity/dvws-node/wiki
-https://medium.com/@chaudharyaditya/insecure-deserialization-3035c6b5766e
-https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
-https://hackernoon.com/secure-sessions-in-javascript-forking-express-session-to-improve-security-s62c35mk
-https://github.com/expressjs/session/issues/158
-https://javascript.plainenglish.io/create-otp-based-user-sign-up-using-node-js-cc4defc54123
-https://jwt.io/
-https://www.bezkoder.com/node-js-jwt-authentication-mysql/
-https://stackoverflow.com/questions/5823722/how-to-serve-an-image-using-nodejs
-https://expressjs.com/en/4x/api.html
-https://www.synack.com/blog/a-deep-dive-into-xxe-injection/
-https://www.exploit-db.com/docs/english/41397-injecting-sqlite-database-based-applications.pdf
-https://brikev.github.io/express-jsdoc-swagger-docs/#/README
-https://app-sec.gitbook.io/application-security/node.js-+-express.js-security-best-practices
+✅ Parameterized SQL queries (no string concatenation)
 
-# Academic References
-This repository has been referenced in the academic research paper:
+✅ Server-side input validation & output encoding
 
-Title: DeepCode AI Fix: Fixing Security Vulnerabilities with Large Language Models
-Authors: Berabi, et al.
-Published on: arXiv, February 2024
-https://arxiv.org/pdf/2402.13291v1
+✅ Secure JWT verification (algorithm, expiry, issuer)
 
-The paper explores the use of Large Language Models to automatically detect and fix security vulnerabilities. Our project is cited as a case study in demonstrating real-world examples of vulnerable applications and their mitigations.
+✅ Security headers via Helmet
+
+✅ Removal of hard-coded secrets
+
+✅ Improved authorization & access control checks
+
+Each vulnerability fix was committed separately with clear references.
+
+🔁 Re-Testing & Verification
+
+Re-ran OWASP ZAP → attacks no longer succeed
+
+Re-ran Semgrep → findings reduced or eliminated
+
+Custom rules confirm vulnerable patterns are removed
+
+📊 Bonus – Traffic Capture & Splunk (Optional)
+
+Captured attack traffic (PCAP) during testing
+
+Ingested PCAP into Splunk
+
+Used SPL queries to rediscover vulnerabilities from logs
+
+Validated real-world visibility of attacks
+
+📦 Deliverables Included
+
+✔ Hardened source code
+
+✔ semgrep-rules/ directory (custom rules)
+
+✔ .env.example (no secrets)
+
+✔ Security report (PDF)
+
+✔ Before/After testing evidence
+
+✔ Short demo video (≤ 3 minutes)
+
+📚 Learning Outcomes
+
+By completing this project, you demonstrate:
+
+Practical web pentesting skills
+
+Strong understanding of OWASP Top 10
+
+Ability to use SAST & DAST together
+
+Secure coding in Node.js & Express
+
+Evidence-based security validation
+
+⚠️ Disclaimer
+
+This project is for educational purposes only.
+All testing was performed on local / lab environments only.
